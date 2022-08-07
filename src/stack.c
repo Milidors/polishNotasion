@@ -10,8 +10,8 @@ void mainFunction()
     expression = inputExpression(&size);
     printf("VALUE: %s", expression);
     printf("\nSIZE: %d", size);
-    parserNumber(expression, size, &nodeQueue);
-    parserOpernand(expression, size, &nodeStack, &nodeQueue);
+    parserNumber(expression, size, &nodeQueue, &nodeStack);
+    // parserOpernand(expression, size, &nodeStack, &nodeQueue);
     printf("\n");
     printLinkedListQueue(nodeQueue);
     printLinkedListStack(nodeStack);
@@ -32,10 +32,12 @@ char *inputExpression(int *size)
     return expression;
 }
 
-void parserNumber(char *expression, int size, queue** Node)
+void parserNumber(char *expression, int size, queue** Node, stack** nodeStack)
 {
-    int size_of_array_numbers = 0, createNode = 0;
+    int size_of_array_numbers = 0, createNodeQueue = 0, size_of_array_opernand = 0, prior;
+    int createNodeStack = 0, priorCheck = -1;
     char *numbers = (char *)calloc(size, sizeof(char));
+    char *opernand = (char *)calloc(size, sizeof(char));
     for (int i = 0; i < size; i++)
     {
         // парсинг чисел
@@ -48,15 +50,40 @@ void parserNumber(char *expression, int size, queue** Node)
         expression[i] != '\n' && expression[i] != '\0' && numbers[0] != ' ')) {
             int num = atoi(numbers); 
             // Если стек пустой то добавляем первый элемент
-            if (createNode == 0) {
+            if (createNodeQueue == 0) {
                 *Node = initQueue(num);
-                createNode = 1;
+                createNodeQueue = 1;
                 size_of_array_numbers = 0;
             // Иначе добавляем последующие эл-ты
             } else {
             pushQueue(num, Node);  
             size_of_array_numbers = 0;
             }
+        }
+        if (i + 1 == size) {
+            menu(popStack(nodeStack), Node);
+        }
+        if (expression[i] >= '(' && expression[i] <= '/') {
+            opernand[size_of_array_opernand] = expression[i];
+            prior = getPrior(opernand[size_of_array_opernand]);
+            if (priorCheck == -1) {
+                if (createNodeStack == 0) {
+                    *nodeStack = initStack(prior, opernand[size_of_array_opernand]);
+                    createNodeStack = 1;
+                    priorCheck = 1;
+                } 
+            } else {
+                 priorCheck = printPrior(*nodeStack);
+                    if (prior == priorCheck) {
+                        menu(popStack(nodeStack), Node);
+                        pushStack(prior, opernand[size_of_array_opernand], nodeStack);
+                    } else if (prior > priorCheck) {
+                        pushStack(prior, opernand[size_of_array_opernand], nodeStack);
+                    } else if (prior < priorCheck) {
+                        menu(popStack(nodeStack), Node);
+                        pushStack(prior, opernand[size_of_array_opernand], nodeStack);
+                    }
+            }           
         }
         // Перезапись массива
         if (size_of_array_numbers == 0) {
@@ -68,47 +95,6 @@ void parserNumber(char *expression, int size, queue** Node)
     free(numbers);
 }
 
-
-// Парсер опернандов набо будет переделать 
-// Расписать все слуучаи выполнения определнных операций 
-// позже раскидать все по отдельным функциям
-// функцию занести в парсинг чисел
-
-void parserOpernand(char *expression, int size, stack** Node, queue** nodeQueue) {
-    char *opernand = (char *)calloc(size, sizeof(char));
-    int size_of_array_opernand = 0, prior = 0, createNode = 0, priorCheck = -1;
-    for (int i = 0; i < size; i++)
-    {
-        if (expression[i] >= '(' && expression[i] <= '/') {
-            opernand[size_of_array_opernand] = expression[i];
-            prior = getPrior(opernand[size_of_array_opernand]);
-            if (priorCheck == -1) {
-                if (createNode == 0) {
-                    *Node = initStack(prior, opernand[size_of_array_opernand]);
-                    size_of_array_opernand = 0;
-                    createNode = 1;
-                } else {
-                    priorCheck =  printPrior(*Node);
-                    if (prior == priorCheck) {
-                        menu(opernand[size_of_array_opernand], nodeQueue);
-                    } else if (prior > priorCheck) {
-                        pushStack(prior, opernand[size_of_array_opernand], Node);
-                    }
-                    size_of_array_opernand = 0;
-                }
-            } else {
-                 priorCheck =  printPrior(*Node);
-                    if (prior == priorCheck) {
-                        menu(opernand[size_of_array_opernand], nodeQueue);
-                    } else if (prior > priorCheck) {
-                        pushStack(prior, opernand[size_of_array_opernand], Node);
-                    }
-                    size_of_array_opernand = 0;
-            }
-        }
-    }
-    free_memory(opernand);
-}
 // Очистка памяти
 void free_memory(char* array) {
     free(array);
@@ -236,7 +222,7 @@ void divi(queue** head) {
     int sum = 0, a = 0, b = 0;
     a = popQueue(head);
     b = popQueue(head);
-    sum = a / b;
+    sum = b / a;
     pushQueue(sum, head);
 }
 void multi(queue** head) {
@@ -250,6 +236,6 @@ void sub(queue** head) {
     int sum = 0, a = 0, b = 0;
     a = popQueue(head);
     b = popQueue(head);
-    sum = a - b;
+    sum = b - a;
     pushQueue(sum, head);
 }

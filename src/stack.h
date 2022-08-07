@@ -26,7 +26,7 @@ void pushQueue(int num, queue** head);
 
 void mainFunction();
 int getPrior(char opernand);
-void parserNumber(char* expression, int size, queue** Node);
+void parserNumber(char* expression, int size, queue** Node, stack** nodeStack);
 char* inputExpression(int* size);
 void parserOpernand(char *expression, int size, stack** Node, queue** nodeQueue);
 void menu(char oper, queue** headQueue); 
