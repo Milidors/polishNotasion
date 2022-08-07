@@ -13,20 +13,31 @@ typedef struct Queue
     int number;
     struct Queue* next;
 } queue;
-stack *init_stack(int prior, char opernand);
-queue *init_queue(int number);
-char pop_stack(stack **Node);
-char pop_queue(queue **Node);
-void check_on_null_queue(queue **Node);
+stack *initStack(int prior, char opernand);
+queue *initQueue(int number);
+char popStack(stack **Node);
+int popQueue(queue **Node);
+// void check_on_null_queue(queue **Node);
 void printLinkedListQueue(queue *head);
 void printLinkedListStack(stack *head);
-void push_stack(int prior, char opernand, stack** head);
-void push_queue(int num, queue** head);
+int printPrior(stack *head);
+void pushStack(int prior, char opernand, stack** head);
+void pushQueue(int num, queue** head);
 
-void main_function();
-int get_prior(char opernand);
-void parser_number(char* expression, int size, queue** Node);
-char* input_expression(int* size);
-void parser_opernand(char *expression, int size, stack** Node);
+void mainFunction();
+int getPrior(char opernand);
+void parserNumber(char* expression, int size, queue** Node);
+char* inputExpression(int* size);
+void parserOpernand(char *expression, int size, stack** Node, queue** nodeQueue);
+void menu(char oper, queue** headQueue); 
+void workWithMenu(stack** headStack, queue** headQueue);
+// Сложение
+void sum(queue** head);
+//  Деление
+void divi(queue** head);
+// Умножение
+void multi(queue** head);
+// Вычитание
+void sub(queue** head);
 void free_memory(char* array);
-#endif // _SRC_STACK_H
+#endif // _SRC_STACK_H 
