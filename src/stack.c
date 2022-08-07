@@ -1,6 +1,18 @@
 #include "stack.h"
 #include <stdio.h>
 #include <stdlib.h>
+/*
+----------------------MADE Milidors----------------------
+*/
+
+/*
+----------------------ОСТАЛОСЬ ДОБАВИТЬ----------------------
+1) Работа со скобками
+2)Работа с минусом 
+3)добавление математических функций
+4)Работа программы без остановки
+----------------------КОНЕЦ----------------------
+*/
 void mainFunction()
 {
     queue* nodeQueue;
@@ -35,7 +47,7 @@ char *inputExpression(int *size)
 void parserNumber(char *expression, int size, queue** Node, stack** nodeStack)
 {
     int size_of_array_numbers = 0, createNodeQueue = 0, size_of_array_opernand = 0, prior;
-    int createNodeStack = 0, priorCheck = -1;
+    int createNodeStack = 0, priorCheck = -1, sizeNode = 0;
     char *numbers = (char *)calloc(size, sizeof(char));
     char *opernand = (char *)calloc(size, sizeof(char));
     for (int i = 0; i < size; i++)
@@ -44,6 +56,7 @@ void parserNumber(char *expression, int size, queue** Node, stack** nodeStack)
         if (expression[i] >= '0' && expression[i] <= '9') {
             numbers[size_of_array_numbers] = expression[i]; 
             size_of_array_numbers += 1;
+            
         }
         // Добавление каждого числа в стэк
         if (((expression[i] >= '(' && expression[i] <= '/') || (i + 1 == size)) &&( 
@@ -62,6 +75,7 @@ void parserNumber(char *expression, int size, queue** Node, stack** nodeStack)
         }
         if (i + 1 == size) {
             menu(popStack(nodeStack), Node);
+            sizeNode = sizeQueue(*Node);
         }
         if (expression[i] >= '(' && expression[i] <= '/') {
             opernand[size_of_array_opernand] = expression[i];
@@ -82,6 +96,8 @@ void parserNumber(char *expression, int size, queue** Node, stack** nodeStack)
                     } else if (prior < priorCheck) {
                         menu(popStack(nodeStack), Node);
                         pushStack(prior, opernand[size_of_array_opernand], nodeStack);
+                    } else {
+                        menu(popStack(nodeStack), Node);
                     }
             }           
         }
@@ -91,6 +107,14 @@ void parserNumber(char *expression, int size, queue** Node, stack** nodeStack)
                 numbers[i] = ' ';
             }
         }
+    }
+    if (sizeNode > 1) {
+        while (sizeNode > 1)
+        {
+            menu(popStack(nodeStack), Node);
+            sizeNode -= 1;
+        }
+        
     }
     free(numbers);
 }
@@ -132,6 +156,7 @@ void pushQueue(int num, queue** head) {
     tmp->next = (*head);
     (*head) = tmp;
 }
+// Удаление и вывод элементов из стека
 int popQueue(queue** head){
     queue* tmp = NULL;
     int value = 0;
@@ -144,6 +169,8 @@ int popQueue(queue** head){
     free(tmp);
     return value;
 }
+// Удаление и вывод элементов из стека
+
 char popStack(stack** head){
     stack* tmp = NULL;
     char value;
@@ -190,6 +217,14 @@ void printLinkedListStack(stack *head) {
 }
 int printPrior(stack *head) {
         return head->prior;
+}
+int sizeQueue(queue* head) {
+    int size = 0; 
+    while (head != NULL) {
+        size += 1;
+        head = head->next;
+        }
+    return size;
 }
 void menu(char oper, queue** headQueue) {
     switch (oper)
