@@ -1,4 +1,4 @@
-#include "stack.h"
+#include "calc.h"
 int main()
 {
     mainFunction();
