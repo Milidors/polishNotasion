@@ -13,5 +13,4 @@ void divi(queue** head);
 void multi(queue** head);
 void sub(queue** head);
 void free_memory(char* array);
-
 #endif // _SRC_CALC_H

@@ -107,6 +107,7 @@ void printLinkedListStack(stack *head) {
 int printPrior(stack *head) {
         return head->prior;
 }
+
 int sizeQueue(queue* head) {
     int size = 0; 
     while (head != NULL) {

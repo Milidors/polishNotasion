@@ -130,7 +130,6 @@ void menu(char oper, queue** headQueue) {
             break;
     }
 }
-
 void sum(queue** head) {
     float sum = 0, a = 0, b = 0;
     a = popQueue(head);

@@ -26,5 +26,4 @@ void pushQueue(float num, queue** head);
 void deleteFirstElementInStack(stack** head);
 void deleteQueue(queue** head);
 void deleteStack(stack** head);
-
 #endif // _SRC_STACK_H
