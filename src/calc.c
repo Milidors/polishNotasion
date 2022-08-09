@@ -1,19 +1,24 @@
 #include "calc.h"
 #include <stdlib.h>
 #include <stdio.h>
-void mainFunction()
-{
-    queue* nodeQueue;
-    stack* nodeStack;
-    char *expression;
-    int size = 0;
-    expression = inputExpression(&size);
-    printf("VALUE: %s", expression);
-    printf("\nSIZE: %d", size);
-    parserNumber(expression, size, &nodeQueue, &nodeStack);
-    printf("\n");
-    printLinkedListQueue(nodeQueue);
-    printLinkedListStack(nodeStack);
+// проверка 5+4-20*99-140+259/4-10*93+5+1000/500
+void mainFunction() 
+{       queue* nodeQueue;
+        stack* nodeStack;
+        char *expression;
+    while (1)
+    {
+        int size = 0;
+        expression = inputExpression(&size);
+        printf("VALUE: %s", expression);
+        printf("\nSIZE: %d", size);
+        parserNumber(expression, size, &nodeQueue, &nodeStack);
+        printf("\n");
+        printLinkedListQueue(nodeQueue);
+        printLinkedListStack(nodeStack);
+    }
+    
+        
     free_memory(expression);
 }
 // Ввод значений
@@ -37,18 +42,28 @@ void parserNumber(char *expression, int size, queue** Node, stack** nodeStack)
     int createNodeStack = 0, priorCheck = -1, sizeNode = 0;
     char *numbers = (char *)calloc(size, sizeof(char));
     char *opernand = (char *)calloc(size, sizeof(char));
+    char minus;
     for (int i = 0; i < size; i++)
     {
         // парсинг чисел
-        if (expression[i] >= '0' && expression[i] <= '9') {
+        if ( (expression[i] >= '0' && expression[i] <= '9')) {
             numbers[size_of_array_numbers] = expression[i]; 
             size_of_array_numbers += 1;
+            if (expression[i-1] == '-' ) {
+                minus = '-';
+            } 
             
         }
         // Добавление каждого числа в стэк
         if (((expression[i] >= '(' && expression[i] <= '/') || (i + 1 == size)) &&( 
         expression[i] != '\n' && expression[i] != '\0' && numbers[0] != ' ')) {
-            int num = atoi(numbers); 
+            int num;
+            if(minus == '-') {
+                num = -atoi(numbers);
+                minus = ' ';
+            } else {
+                num = atoi(numbers);
+            }
             // Если стек пустой то добавляем первый элемент
             if (createNodeQueue == 0) {
                 *Node = initQueue(num);
@@ -78,9 +93,12 @@ void parserNumber(char *expression, int size, queue** Node, stack** nodeStack)
                     if (prior == priorCheck) {
                         menu(popStack(nodeStack), Node);
                         pushStack(prior, opernand[size_of_array_opernand], nodeStack);
+
                     } else if (prior > priorCheck) {
+
                         pushStack(prior, opernand[size_of_array_opernand], nodeStack);
                     } else if (prior < priorCheck && prior != 0) {
+
                         menu(popStack(nodeStack), Node);
                         pushStack(prior, opernand[size_of_array_opernand], nodeStack);
                     } else if (prior == 0) {
@@ -88,7 +106,6 @@ void parserNumber(char *expression, int size, queue** Node, stack** nodeStack)
                     } else if (prior == 0 && priorCheck == 0) {
                         printf("ENTER");
                         deleteFirstElementInStack(nodeStack);
-                        deleteFirstElementInStack(nodeStack); 
                     }
             }           
         }
@@ -99,16 +116,19 @@ void parserNumber(char *expression, int size, queue** Node, stack** nodeStack)
             }
         }
     }
+    printf("%d", sizeNode);
     if (sizeNode > 1) {
+                       
+    if (prior == 0 && priorCheck == 0){
+        deleteFirstElementInStack(nodeStack);
         while (sizeNode > 1)
         {
-            printLinkedListStack(*nodeStack);
-            // printf("%d", sizeNode);
             menu(popStack(nodeStack), Node);
             sizeNode -= 1;
         }
     }
-    free(numbers);
+    }
+    free_memory(numbers);
 }
 
 void menu(char oper, queue** headQueue) {
@@ -151,11 +171,15 @@ void multi(queue** head) {
     sum = a * b;
     pushQueue(sum, head);
 }
+
 void sub(queue** head) {
     float sum = 0, a = 0, b = 0;
     a = popQueue(head);
     b = popQueue(head);
-    sum = b - a;
+    if (a > 0) {
+        sum = b - a;
+    } else 
+        sum = b + a;
     pushQueue(sum, head);
 }
 int getPrior(char opernand) {

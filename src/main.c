@@ -1,7 +1,9 @@
 #include "calc.h"
+#include <stdio.h>
 int main()
 {
-    mainFunction();
+        mainFunction();
+   
     return 0;
-    
+
 }
