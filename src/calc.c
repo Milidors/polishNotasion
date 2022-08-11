@@ -45,6 +45,7 @@ void parserNumber(char *expression, int size, queue** Node, stack** nodeStack)
     char minus;
     for (int i = 0; i < size; i++)
     {
+        // ____________________WORK WITH QUEUE____________________________
         // парсинг чисел
         if ( (expression[i] >= '0' && expression[i] <= '9')) {
             numbers[size_of_array_numbers] = expression[i]; 
@@ -64,7 +65,7 @@ void parserNumber(char *expression, int size, queue** Node, stack** nodeStack)
             } else {
                 num = atoi(numbers);
             }
-            // Если стек пустой то добавляем первый элемент
+            // Если очередь пустоая то добавляем первый элемент
             if (createNodeQueue == 0) {
                 *Node = initQueue(num);
                 createNodeQueue = 1;
@@ -75,40 +76,45 @@ void parserNumber(char *expression, int size, queue** Node, stack** nodeStack)
             size_of_array_numbers = 0;
             }
         }
+
+        // _______________________WORK WITH LAST ELEMENT IN STACK_______________________________
         if (i + 1 == size) {
-            menu(popStack(nodeStack), Node);
+            menu(popStack(nodeStack), Node, nodeStack);
             sizeNode = sizeQueue(*Node);
         }
+
+        // ____________________________WORK WITH STACK________________________________
         if (expression[i] >= '(' && expression[i] <= '/') {
             opernand[size_of_array_opernand] = expression[i];
             prior = getPrior(opernand[size_of_array_opernand]);
-            if (priorCheck == -1) {
-                if (createNodeStack == 0) {
-                    *nodeStack = initStack(prior, opernand[size_of_array_opernand]);
-                    createNodeStack = 1;
-                    priorCheck = 1;
-                } 
-            } else {
+            if (createNodeStack == 0) {
+                *nodeStack = initStack(prior, opernand[size_of_array_opernand]);
+                createNodeStack = 1;
+            } 
+             else {
                  priorCheck = printPrior(*nodeStack);
-                    if (prior == priorCheck) {
-                        menu(popStack(nodeStack), Node);
+                 printf("\nENTER");
+                    if (prior == priorCheck && ((prior != 0 && priorCheck != 0) && (prior != -1 && priorCheck != -1))) {
+                        
+                        menu(popStack(nodeStack), Node, nodeStack);
                         pushStack(prior, opernand[size_of_array_opernand], nodeStack);
-
-                    } else if (prior > priorCheck) {
-
+                    } else if ((prior > priorCheck)) {
                         pushStack(prior, opernand[size_of_array_opernand], nodeStack);
-                    } else if (prior < priorCheck && prior != 0) {
+                    } else if (prior < priorCheck && (prior != 0 && prior != -1)) {
 
-                        menu(popStack(nodeStack), Node);
+                        menu(popStack(nodeStack), Node, nodeStack);
                         pushStack(prior, opernand[size_of_array_opernand], nodeStack);
                     } else if (prior == 0) {
                         pushStack(prior, opernand[size_of_array_opernand], nodeStack);
-                    } else if (prior == 0 && priorCheck == 0) {
-                        printf("ENTER");
-                        deleteFirstElementInStack(nodeStack);
+                    } 
+                    else if (prior == -1) {
+                        menu(popStack(nodeStack), Node, nodeStack);
                     }
+            printLinkedListQueue(*Node);
+                
             }           
         }
+        // __________________________REBOOT ARRAY____________________
         // Перезапись массива
         if (size_of_array_numbers == 0) {
             for (int i = 0; i < size; i++) {
@@ -116,22 +122,29 @@ void parserNumber(char *expression, int size, queue** Node, stack** nodeStack)
             }
         }
     }
-    printf("%d", sizeNode);
+    // Переделать 
+    // Считает только простые выражение на подобии 5*(2+10-45+54)
+    // Не считает 5*(2+10-45+54)-45 или 5*(2+10-45+54*25/45-500) или 5*(2+10-45+54*25/45-500)-250 или 
+    // 1000+5*(2+10-45+54*25/45-500+(250-450)*(50*2))-250+42123
     if (sizeNode > 1) {
-                       
-    if (prior == 0 && priorCheck == 0){
-        deleteFirstElementInStack(nodeStack);
-        while (sizeNode > 1)
-        {
-            menu(popStack(nodeStack), Node);
-            sizeNode -= 1;
-        }
-    }
+        printLinkedListStack(*nodeStack);
+        printLinkedListQueue(*Node);
+        int sizeS = sizeStack(*nodeStack);
+                printf("SIZE  = = = =%d", sizeS);
+
+        while (sizeS > 0)
+            {
+                menu(popStack(nodeStack), Node, nodeStack);
+                printLinkedListStack(*nodeStack);
+                sizeS = sizeStack(*nodeStack);;
+                printf("%d", sizeS);
+
+            }
     }
     free_memory(numbers);
 }
-
-void menu(char oper, queue** headQueue) {
+// _________________________MENU_________________________
+void menu(char oper, queue** headQueue, stack** headStack) {
     switch (oper)
     {
         case '+':
@@ -146,8 +159,7 @@ void menu(char oper, queue** headQueue) {
         case '/':
             divi(headQueue);
             break;
-        default:
-            break;
+        default: break;
     }
 }
 void sum(queue** head) {
@@ -184,7 +196,8 @@ void sub(queue** head) {
 }
 int getPrior(char opernand) {
     int prior = 0;
-    if (opernand == '(' || opernand == ')') prior = 0;
+    if (opernand == '(') prior = 0;
+    else if (opernand == ')') prior = -1;
     else if (opernand == '+') prior = 1;
     else if (opernand == '-') prior = 1;
     else if (opernand == '*') prior = 2;

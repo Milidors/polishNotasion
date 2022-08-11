@@ -7,7 +7,7 @@ int getPrior(char opernand);
 void parserNumber(char* expression, int size, queue** Node, stack** nodeStack);
 char* inputExpression(int* size);
 void parserOpernand(char *expression, int size, stack** Node, queue** nodeQueue);
-void menu(char oper, queue** headQueue); 
+void menu(char oper, queue** headQueue, stack** headStack); 
 void sum(queue** head);
 void divi(queue** head);
 void multi(queue** head);

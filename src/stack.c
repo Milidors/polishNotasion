@@ -116,3 +116,12 @@ int sizeQueue(queue* head) {
         }
     return size;
 }
+
+int sizeStack(stack* head) {
+    int size = 0; 
+    while (head != NULL) {
+        size += 1;
+        head = head->next;
+        }
+    return size;
+}
