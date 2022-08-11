@@ -1,7 +1,11 @@
 #include "calc.h"
 #include <stdlib.h>
 #include <stdio.h>
-// проверка 5+4-20*99-140+259/4-10*93+5+1000/500
+/*
+----------------------MADE Milidors----------------------
+------------------------2  0  2  2----------------------
+*/
+
 void mainFunction() 
 {       queue* nodeQueue;
         stack* nodeStack;
@@ -15,7 +19,6 @@ void mainFunction()
         parserNumber(expression, size, &nodeQueue, &nodeStack);
         printf("\n");
         printLinkedListQueue(nodeQueue);
-        printLinkedListStack(nodeStack);
     }
     
         
@@ -39,7 +42,7 @@ char *inputExpression(int *size)
 void parserNumber(char *expression, int size, queue** Node, stack** nodeStack)
 {
     int size_of_array_numbers = 0, createNodeQueue = 0, size_of_array_opernand = 0, prior;
-    int createNodeStack = 0, priorCheck = -1, sizeNode = 0;
+    int createNodeStack = 0, priorCheck = -1, sizeNode = 0, count = 0;
     char *numbers = (char *)calloc(size, sizeof(char));
     char *opernand = (char *)calloc(size, sizeof(char));
     char minus;
@@ -93,7 +96,6 @@ void parserNumber(char *expression, int size, queue** Node, stack** nodeStack)
             } 
              else {
                  priorCheck = printPrior(*nodeStack);
-                 printf("\nENTER");
                     if (prior == priorCheck && ((prior != 0 && priorCheck != 0) && (prior != -1 && priorCheck != -1))) {
                         
                         menu(popStack(nodeStack), Node, nodeStack);
@@ -106,42 +108,42 @@ void parserNumber(char *expression, int size, queue** Node, stack** nodeStack)
                         pushStack(prior, opernand[size_of_array_opernand], nodeStack);
                     } else if (prior == 0) {
                         pushStack(prior, opernand[size_of_array_opernand], nodeStack);
+                        count += 1;
                     } 
                     else if (prior == -1) {
-                        menu(popStack(nodeStack), Node, nodeStack);
+                        if (count >= 0) {
+                            while (priorCheck != 0)
+                            {
+                                menu(popStack(nodeStack), Node, nodeStack);
+                                priorCheck = printPrior(*nodeStack);   
+                            }
+                            deleteFirstElementInStack(nodeStack);
+                            count -= 1;
+
+                        }
+                        
                     }
-            printLinkedListQueue(*Node);
                 
             }           
         }
         // __________________________REBOOT ARRAY____________________
-        // Перезапись массива
         if (size_of_array_numbers == 0) {
             for (int i = 0; i < size; i++) {
                 numbers[i] = ' ';
             }
         }
     }
-    // Переделать 
-    // Считает только простые выражение на подобии 5*(2+10-45+54)
-    // Не считает 5*(2+10-45+54)-45 или 5*(2+10-45+54*25/45-500) или 5*(2+10-45+54*25/45-500)-250 или 
-    // 1000+5*(2+10-45+54*25/45-500+(250-450)*(50*2))-250+42123
+    
     if (sizeNode > 1) {
-        printLinkedListStack(*nodeStack);
-        printLinkedListQueue(*Node);
         int sizeS = sizeStack(*nodeStack);
-                printf("SIZE  = = = =%d", sizeS);
-
         while (sizeS > 0)
             {
                 menu(popStack(nodeStack), Node, nodeStack);
-                printLinkedListStack(*nodeStack);
-                sizeS = sizeStack(*nodeStack);;
-                printf("%d", sizeS);
-
+                sizeS = sizeStack(*nodeStack);
             }
     }
     free_memory(numbers);
+    free_memory(opernand);
 }
 // _________________________MENU_________________________
 void menu(char oper, queue** headQueue, stack** headStack) {
@@ -163,35 +165,32 @@ void menu(char oper, queue** headQueue, stack** headStack) {
     }
 }
 void sum(queue** head) {
-    float sum = 0, a = 0, b = 0;
+    float sum = 0.0, a = 0.0, b = 0.0;
     a = popQueue(head);
     b = popQueue(head);
     sum = a + b;
     pushQueue(sum, head);
 }
 void divi(queue** head) {
-    float sum = 0, a = 0, b = 0;
+    float sum = 0.0, a = 0.0, b = 0.0;
     a = popQueue(head);
     b = popQueue(head);
     sum = b / a;
     pushQueue(sum, head);
 }
 void multi(queue** head) {
-    float sum = 0, a = 0, b = 0;
+    float sum = 0.0, a = 0.0, b = 0.0;
     a = popQueue(head);
     b = popQueue(head);
-    sum = a * b;
+    sum = b * a;
     pushQueue(sum, head);
 }
 
 void sub(queue** head) {
-    float sum = 0, a = 0, b = 0;
+    float sum = 0.0, a = 0.0, b = 0.0;
     a = popQueue(head);
     b = popQueue(head);
-    if (a > 0) {
-        sum = b - a;
-    } else 
-        sum = b + a;
+    sum = b + a;
     pushQueue(sum, head);
 }
 int getPrior(char opernand) {
