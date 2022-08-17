@@ -14,7 +14,8 @@
 3)добавление математических функций ----------
 4)Работа программы без остановки +++++++++++
 5)Доработать округлени ----------
-6)ОЧИСТКА ПАМЯТИ ----------
+6)ОЧИСТКА ПАМЯТИ ???????????
+7)Проверка на корректность введенных данных ----------
 ----------------------КОНЕЦ----------------------
 */
 
@@ -23,7 +24,7 @@ stack *initStack(int prior, char opernand) {
     stack* tmp = (stack*)malloc(sizeof(stack));
     tmp -> prior = prior;
     tmp -> opernand = opernand;
-    tmp ->next = NULL;
+    tmp -> next = NULL;
     return(tmp);
 }
 // Инициализация очереди
@@ -89,7 +90,6 @@ void deleteFirstElementInStack(stack** head) {
 }
 // Вывод всех эл-тов в очереди
 void printLinkedListQueue(queue *head) {
-    printf("\nANSWER\n");
     while (head != NULL) {
         printf("%.10f ", head->number);
         head = head->next;
@@ -127,4 +127,21 @@ int sizeStack(stack* head) {
         head = head->next;
         }
     return size;
+}
+
+void deleteQueue(queue** head) {
+    while ((*head) -> next)
+    {
+        popQueue(head);
+        *head = (*head) ->next;
+    }
+    free(*head);
+}
+void deleteStack(stack** head) {
+while ((*head) -> next)
+    {
+        popStack(head);
+        *head = (*head) ->next;
+    }
+    free(*head);
 }
