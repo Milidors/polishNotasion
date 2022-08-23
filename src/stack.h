@@ -12,13 +12,13 @@ typedef struct Stack
 {
     int prior;
     char opernand;
-    struct Stack* next;
-    
+    struct Stack *next;
+
 } stack;
 typedef struct Queue
 {
     float number;
-    struct Queue* next;
+    struct Queue *next;
 } queue;
 // ______________________________________
 
@@ -38,19 +38,19 @@ void printLinkedListStack(stack *head);
 //_______________________________________
 
 int printPrior(stack *head);
-int sizeQueue(queue* head);
-int sizeStack(stack* head);
+int sizeQueue(queue *head);
+int sizeStack(stack *head);
 
 // ______________________________________
-void pushStack(int prior, char opernand, stack** head);
-void pushQueue(float num, queue** head);
+void pushStack(int prior, char opernand, stack **head);
+void pushQueue(float num, queue **head);
 // ______________________________________
 
-void deleteFirstElementInStack(stack** head);
+void deleteFirstElementInStack(stack **head);
 
 // ___________CLEAR MEMORY_______________
-void deleteQueue(queue** head);
-void deleteStack(stack** head);
+void deleteQueue(queue **head);
+void deleteStack(stack **head);
 // ______________________________________
 
 #endif // _SRC_STACK_H
